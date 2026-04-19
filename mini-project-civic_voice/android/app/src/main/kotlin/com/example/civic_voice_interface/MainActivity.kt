@@ -1,0 +1,5 @@
+package com.example.civic_voice_interface
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()

@@ -1,0 +1,49 @@
+type User @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  email: String!
+  name: String
+  mobile: String
+  language: String
+  isGuest: Boolean
+  createdAt: AWSDateTime
+}
+
+type UserDocument @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  name: String!
+  category: String!
+  size: String!
+  uploadDate: AWSDateTime!
+  status: String!
+  filePath: String
+  isVerified: Boolean!
+  verificationMessage: String
+  expiryDate: AWSDateTime
+  extractedText: String
+}
+
+type CitizenProfile @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  full_name: String!
+  mobile: String!
+  email: String!
+  state: String!
+  district: String
+  pincode: String
+  date_of_birth: String
+  gender: String
+  marital_status: String
+  occupation: String
+  annual_income_range: String
+  caste_category: String
+  age: Int
+  income: Float
+  is_kyc_verified: Boolean
+  linked_documents: [String]
+  applied_schemes: [String]
+  aadhaar_last_four: String
+  pan_masked: String
+  ration_card_number: String
+  is_disabled: Boolean
+  disability_type: String
+}

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>Waving Indian Flag</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #0C0A08;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    // RENDERER
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true, alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    // CAMERA
+    const camera = new THREE.PerspectiveCamera(
+      45, window.innerWidth / window.innerHeight, 0.1, 200
+    );
+    camera.position.set(0, 0.5, 9);
+    camera.lookAt(0, 0.2, 0);
+
+    // SCENE
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0C0A08);
+    scene.fog = new THREE.FogExp2(0x0C0A08, 0.03);
+
+    // LIGHTING
+    const ambient = new THREE.AmbientLight(0xFFF3E0, 0.7);
+    scene.add(ambient);
+
+    const sun = new THREE.DirectionalLight(0xFFD180, 2.8);
+    sun.position.set(6, 8, 5);
+    sun.castShadow = true;
+    sun.shadow.mapSize.width = 2048;
+    sun.shadow.mapSize.height = 2048;
+    scene.add(sun);
+
+    const fill = new THREE.DirectionalLight(0x88AAFF, 0.5);
+    fill.position.set(-5, 2, 3);
+    scene.add(fill);
+
+    const rimLight = new THREE.PointLight(0xFF6B1A, 1.5, 25);
+    rimLight.position.set(-7, 3, 4);
+    scene.add(rimLight);
+
+    // FLAG TEXTURE
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 800;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const band = H / 3;
+
+    ctx.fillStyle = '#FF6B1A';
+    ctx.fillRect(0, 0, W, band);
+
+    ctx.fillStyle = '#F8F4EE';
+    ctx.fillRect(0, band, W, band);
+
+    ctx.fillStyle = '#138808';
+    ctx.fillRect(0, band * 2, W, band);
+
+    const cx = W / 2, cy = H / 2;
+    const radius = band * 0.40;
+    ctx.strokeStyle = '#000080';
+    ctx.fillStyle = '#000080';
+    ctx.lineWidth = radius * 0.07;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 0.10, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (let i = 0; i < 24; i++) {
+      const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
+      const inner = radius * 0.10;
+      const outer = radius * 0.88;
+      ctx.lineWidth = radius * 0.035;
+      ctx.beginPath();
+      ctx.moveTo(
+        cx + Math.cos(angle) * inner,
+        cy + Math.sin(angle) * inner
+      );
+      ctx.lineTo(
+        cx + Math.cos(angle) * outer,
+        cy + Math.sin(angle) * outer
+      );
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(
+        cx + Math.cos(angle) * outer,
+        cy + Math.sin(angle) * outer,
+        radius * 0.045, 0, Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    const flagTexture = new THREE.CanvasTexture(canvas);
+    flagTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+    // FLAG MESH
+    const FLAG_W = 7.0;
+    const FLAG_H = 4.67;
+    const SEG_W = 80;
+    const SEG_H = 50;
+
+    const flagGeo = new THREE.PlaneGeometry(
+      FLAG_W, FLAG_H, SEG_W, SEG_H
+    );
+
+    const flagMat = new THREE.MeshStandardMaterial({
+      map: flagTexture,
+      side: THREE.DoubleSide,
+      roughness: 0.5,
+      metalness: 0.05,
+    });
+
+    const flag = new THREE.Mesh(flagGeo, flagMat);
+    flag.position.set(FLAG_W / 2 - 3.55, 0.8, 0);
+    flag.castShadow = true;
+    scene.add(flag);
+
+    const posAttr = flagGeo.attributes.position;
+    const origX = new Float32Array(posAttr.count);
+    const origY = new Float32Array(posAttr.count);
+    for (let i = 0; i < posAttr.count; i++) {
+      origX[i] = posAttr.getX(i);
+      origY[i] = posAttr.getY(i);
+    }
+
+
+    // BACKGROUND STARS
+    const starCount = 400;
+    const starGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 80;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 40 - 15;
+    }
+    starGeo.setAttribute('position',
+      new THREE.BufferAttribute(positions, 3)
+    );
+    const starMat = new THREE.PointsMaterial({
+      color: 0xFFF3E0, size: 0.07,
+      transparent: true, opacity: 0.55,
+    });
+    scene.add(new THREE.Points(starGeo, starMat));
+
+    // WAVE ANIMATION LOOP
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      for (let i = 0; i < posAttr.count; i++) {
+        const ox = origX[i];
+        const oy = origY[i];
+
+        const xNorm = (ox + FLAG_W / 2) / FLAG_W;
+
+        const amp = xNorm * xNorm * 0.5;
+
+        const w1 = Math.sin(
+          ox * 2.2 - t * 2.0
+        ) * amp;
+
+        const w2 = Math.sin(
+          ox * 3.8 - t * 2.8 + 1.2
+        ) * amp * 0.35;
+
+        const w3 = Math.sin(
+          oy * 2.0 + ox * 0.9 - t * 1.6
+        ) * amp * 0.18;
+
+        const gust = 0.85 + Math.sin(t * 0.4) * 0.15;
+
+        posAttr.setZ(i, (w1 + w2 + w3) * gust);
+      }
+      posAttr.needsUpdate = true;
+      flagGeo.computeVertexNormals();
+
+      camera.position.x = Math.sin(t * 0.07) * 0.4;
+      camera.position.y = 0.5 + Math.sin(t * 0.11) * 0.2;
+      camera.lookAt(0, 0.3, 0);
+
+      rimLight.intensity = 1.2 + Math.sin(t * 1.2) * 0.4;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+
+</html>

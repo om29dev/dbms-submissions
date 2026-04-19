@@ -1,0 +1,105 @@
+name: civic_voice_interface
+description: Civic Voice Interface — A voice-first decision-intelligence system for government service navigation in Bharat.
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management & Routing
+  provider: ^6.1.2
+  go_router: ^17.1.0
+
+  # Voice & Language
+  speech_to_text: 7.3.0
+  flutter_tts: ^4.2.5
+
+  # Backend
+  shared_preferences: ^2.2.3
+  http: ^1.1.0
+
+  # Animations & UI
+  lottie: ^3.1.0
+  flutter_animate: ^4.5.0
+  animate_do: ^4.2.0
+  animated_text_kit: ^4.2.2
+  shimmer: ^3.0.0
+  confetti: ^0.8.0
+
+  # Visual Effects
+  glassmorphism: ^3.0.0
+
+  # Design & Icons
+  google_fonts: ^8.0.2
+  font_awesome_flutter: ^10.5.0
+
+  # Charts & Data Viz
+  fl_chart: ^1.1.1
+
+  # Permissions & Device
+  permission_handler: ^12.0.1
+  geolocator: ^14.0.2
+  google_maps_flutter: ^2.6.1
+  connectivity_plus: ^7.0.0
+
+  # Media
+  record: ^6.1.2
+  audioplayers: ^6.5.1
+  image_picker: ^1.0.7
+  image: ^4.1.3
+  file_picker: ^10.3.10
+
+  # Utilities
+  url_launcher: ^6.2.6
+  webview_flutter: ^4.4.0
+  flutter_local_notifications: ^21.0.0
+  path_provider: ^2.1.5
+  intl: 0.20.2
+  countup: ^0.1.3
+  csv: ^7.2.0
+
+  timezone: any
+
+  # Security (Document Vault)
+  flutter_secure_storage: ^10.0.0
+  local_auth: ^3.0.1
+  flutter_image_compress: ^2.1.0
+  amplify_flutter: ^2.10.0
+  amplify_auth_cognito: ^2.10.0
+  amplify_api: ^2.10.0
+  amplify_storage_s3: ^2.10.0
+  aws_signature_v4: ^0.6.10
+  aws_common: ^0.7.12
+  crypto: ^3.0.3
+  convert: ^3.1.1
+  screenshot: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/lottie/
+    - assets/images/
+    - assets/icons/
+    - assets/data/
+    - assets/forms/
+    - assets/flag/flag.html
+
+  # Fonts are loaded via the google_fonts package (no local font files needed)
